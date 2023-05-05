@@ -1,3 +1,3 @@
-# Grocery list app
+# Shopping list app
 
-A simple, open source, grocery list mobile app for Android that doesn't contain anything extra and no ads.
+A simple, open source, shopping list mobile app for Android that doesn't contain anything extra and no advertisement.
