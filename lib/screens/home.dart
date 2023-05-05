@@ -31,7 +31,7 @@ class _HomeState extends State<Home> {
         child: ListView.builder(
           itemCount: context.watch<ItemsProvider>().items.length,
           itemBuilder: (context, index) {
-            return ListCard(title: context.watch<ItemsProvider>().items[index]);
+            return ListCard(item: context.watch<ItemsProvider>().items[index]);
           },
         ),
       ),

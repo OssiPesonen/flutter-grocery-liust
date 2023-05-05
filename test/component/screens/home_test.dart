@@ -48,5 +48,20 @@ void main() {
 
       expect(find.text('List item'), findsNothing);
     });
+
+    testWidgets('should toggle check', (widgetTester) async {
+      await widgetTester.pumpWidget(testWidget);
+
+      String inputValue = 'List item';
+      await widgetTester.enterText(find.byKey(const Key('home-appbar-textfield')), inputValue);
+      await widgetTester.testTextInput.receiveAction(TextInputAction.done);
+
+      await widgetTester.pump();
+
+      await widgetTester.tap(find.byKey(const Key('list-card-item-toggle')));
+      await widgetTester.pumpAndSettle();
+
+      expect(widgetTester.widget<Checkbox>(find.byKey(const Key('list-card-item-toggle'))).value, true);
+    });
   });
 }

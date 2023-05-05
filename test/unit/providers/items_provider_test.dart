@@ -1,4 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
+import 'package:shopping_list_app/models/list_item.dart';
 import 'package:shopping_list_app/providers/items_provider.dart';
 
 void main() {
@@ -10,8 +11,8 @@ void main() {
     });
 
     test('should return an item once it is added', () {
-        itemsProvider.addItem('List item');
-        expect(itemsProvider.items.length, 1);
+      itemsProvider.addItem(ListItem(title: 'List item', isComplete: false));
+      expect(itemsProvider.items.length, 1);
     });
 
     test('should clear items', () {

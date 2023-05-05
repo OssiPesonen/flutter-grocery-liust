@@ -6,11 +6,13 @@ void main() {
   group('BottomNavigation', () {
     testWidgets('should render', (widgetTester) async {
       Widget testWidget = const MediaQuery(
-          data: MediaQueryData(),
-          child: MaterialApp(
-              home: Scaffold(
+        data: MediaQueryData(),
+        child: MaterialApp(
+          home: Scaffold(
             bottomNavigationBar: HomeBottomNavigation(),
-          )));
+          ),
+        ),
+      );
 
       await widgetTester.pumpWidget(testWidget);
 

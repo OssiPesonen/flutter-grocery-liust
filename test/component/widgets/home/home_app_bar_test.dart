@@ -9,7 +9,7 @@ void main() {
     testWidgets('should render', (widgetTester) async {
       Widget testWidget = TestUtil.buildTestScaffold(const HomeAppBar());
       await widgetTester.pumpWidget(testWidget);
-      expect(find.byKey(Key('home-appbar-textfield')), findsOneWidget);
+      expect(find.byKey(const Key('home-appbar-textfield')), findsOneWidget);
     });
   });
 }

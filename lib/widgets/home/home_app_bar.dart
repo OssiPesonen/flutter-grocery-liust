@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shopping_list_app/models/list_item.dart';
 import 'package:shopping_list_app/providers/items_provider.dart';
 import 'package:provider/provider.dart';
 
@@ -27,7 +28,13 @@ class _HomeAppBarState extends State<HomeAppBar> {
           key: const Key('home-appbar-textfield'),
           controller: appBarTextFieldController,
           onSubmitted: (value) {
-            context.read<ItemsProvider>().addItem(value);
+            context.read<ItemsProvider>().addItem(
+                  ListItem(
+                    title: value,
+                    isComplete: false,
+                  ),
+                );
+
             appBarTextFieldController.text = '';
           },
           decoration: InputDecoration(
