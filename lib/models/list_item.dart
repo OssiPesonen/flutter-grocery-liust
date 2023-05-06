@@ -7,11 +7,14 @@ class ListItem {
   bool isPickedUp;
   /// How many items are there to pick up
   int amount;
+  /// Product price
+  double price;
 
   ListItem({
     required this.id,
     required this.title,
-    required this.isPickedUp,
     required this.amount,
+    this.isPickedUp = false,
+    this.price = 0.00,
   });
 }

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'package:shopping_list_app/screens/home.dart';
+import 'package:shopping_list_app/widgets/list_card.dart';
 
 import '../test_util.dart';
 
@@ -50,7 +51,7 @@ void main() {
       expect(find.text('List item'), findsNothing);
     });
 
-    testWidgets('should toggle check', (widgetTester) async {
+    testWidgets('should toggle check on item checkbox press', (widgetTester) async {
       await widgetTester.pumpWidget(testWidget);
 
       String inputValue = 'List item';
@@ -60,6 +61,23 @@ void main() {
       await widgetTester.pump();
 
       await widgetTester.tap(find.byType(Checkbox));
+      await widgetTester.pumpAndSettle();
+
+      expect(widgetTester.widget<Checkbox>(find.byType(Checkbox)).value, true);
+      expect(find.text('Picked up items'), findsOneWidget);
+    });
+
+
+    testWidgets('should toggle check on item swipe', (widgetTester) async {
+      await widgetTester.pumpWidget(testWidget);
+
+      String inputValue = 'List item';
+      await widgetTester.enterText(find.byKey(const Key('appbar-textfield')), inputValue);
+      await widgetTester.testTextInput.receiveAction(TextInputAction.done);
+
+      await widgetTester.pump();
+
+      await widgetTester.drag(find.byType(ListCard), const Offset(500.0, 0.0));
       await widgetTester.pumpAndSettle();
 
       expect(widgetTester.widget<Checkbox>(find.byType(Checkbox)).value, true);

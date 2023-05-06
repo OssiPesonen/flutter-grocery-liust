@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:nanoid/nanoid.dart';
+import 'package:provider/provider.dart';
 import 'package:shopping_list_app/models/list_item.dart';
 import 'package:shopping_list_app/providers/items_provider.dart';
-import 'package:provider/provider.dart';
+import 'package:shopping_list_app/utils/constants.dart' as constants;
 
 class AddItemInput extends StatefulWidget {
   const AddItemInput({Key? key}) : super(key: key);
@@ -50,7 +51,7 @@ class _AddItemInputState extends State<AddItemInput> {
                 style: BorderStyle.none,
               ),
             ),
-            fillColor: const Color.fromRGBO(0, 0, 0, 0.05),
+            fillColor: constants.inputBackgroundFill,
             labelText: "Add item to list",
           ),
         ),

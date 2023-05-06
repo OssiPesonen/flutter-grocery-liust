@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:shopping_list_app/providers/items_provider.dart';
 import 'package:provider/provider.dart';
+import 'package:shopping_list_app/providers/items_provider.dart';
 import 'package:shopping_list_app/screens/home.dart';
 
 void main() {
@@ -21,7 +21,9 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Shopping List',
-      theme: ThemeData(),
+      theme: ThemeData(
+        colorScheme: ColorScheme.fromSwatch(primarySwatch: Colors.lightBlue),
+      ),
       home: const Home(),
     );
   }

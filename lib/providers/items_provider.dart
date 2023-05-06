@@ -21,7 +21,7 @@ class ItemsProvider extends ChangeNotifier {
         item.title = split.join(' ');
       }
     }
-    
+
     _items.add(item);
     notifyListeners();
   }
@@ -65,6 +65,42 @@ class ItemsProvider extends ChangeNotifier {
         _items.removeAt(index);
       }
 
+      notifyListeners();
+    }
+  }
+
+  void editItem(ListItem item) {
+    var index = _items.indexWhere((element) => element.id == item.id);
+
+    if (index > -1) {
+      _items[index] = item;
+      notifyListeners();
+    }
+  }
+
+  void editItemName(String id, String title) {
+    var index = _items.indexWhere((element) => element.id == id);
+
+    if (index > -1) {
+      _items[index].title = title;
+      notifyListeners();
+    }
+  }
+
+  void editItemAmount(String id, int amount) {
+    var index = _items.indexWhere((element) => element.id == id);
+
+    if (index > -1) {
+      _items[index].amount = amount;
+      notifyListeners();
+    }
+  }
+
+  void editItemPrice(String id, double price) {
+    var index = _items.indexWhere((element) => element.id == id);
+
+    if (index > -1) {
+      _items[index].price = price;
       notifyListeners();
     }
   }
