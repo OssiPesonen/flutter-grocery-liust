@@ -2,13 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:shopping_list_app/providers/items_provider.dart';
 import 'package:provider/provider.dart';
 
-class HomeBottomNavigation extends StatelessWidget {
-  const HomeBottomNavigation({Key? key}) : super(key: key);
+class BottomNavigation extends StatelessWidget {
+  const BottomNavigation({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      key: const Key('home-bottom-navigation'),
+      key: const Key('bottom-navigation'),
       height: 80,
       child: BottomAppBar(
         child: Row(
@@ -19,7 +19,7 @@ class HomeBottomNavigation extends StatelessWidget {
               radius: 28,
               child: IconButton(
                 color: Colors.black,
-                key: const Key('home-bottom-navigation-button-clear-list'),
+                key: const Key('bottom-navigation-button-clear-list'),
                 onPressed: () {
                   context.read<ItemsProvider>().clearItems();
                 },

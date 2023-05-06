@@ -1,16 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:nanoid/nanoid.dart';
 import 'package:shopping_list_app/models/list_item.dart';
 import 'package:shopping_list_app/providers/items_provider.dart';
 import 'package:provider/provider.dart';
 
-class HomeAppBar extends StatefulWidget {
-  const HomeAppBar({Key? key}) : super(key: key);
+class AddItemInput extends StatefulWidget {
+  const AddItemInput({Key? key}) : super(key: key);
 
   @override
-  State<HomeAppBar> createState() => _HomeAppBarState();
+  State<AddItemInput> createState() => _AddItemInputState();
 }
 
-class _HomeAppBarState extends State<HomeAppBar> {
+class _AddItemInputState extends State<AddItemInput> {
   final appBarTextFieldController = TextEditingController();
 
   @override
@@ -25,13 +26,15 @@ class _HomeAppBarState extends State<HomeAppBar> {
     return Column(
       children: [
         TextField(
-          key: const Key('home-appbar-textfield'),
+          key: const Key('appbar-textfield'),
           controller: appBarTextFieldController,
           onSubmitted: (value) {
             context.read<ItemsProvider>().addItem(
                   ListItem(
+                    id: nanoid(),
                     title: value,
-                    isComplete: false,
+                    isPickedUp: false,
+                    amount: 1,
                   ),
                 );
 

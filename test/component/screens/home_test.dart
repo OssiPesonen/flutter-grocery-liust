@@ -12,14 +12,14 @@ void main() {
     testWidgets('should render', (WidgetTester widgetTester) async {
       await widgetTester.pumpWidget(testWidget);
       expect(find.byKey(const Key('home-appbar')), findsOneWidget);
-      expect(find.byKey(const Key('home-body')), findsOneWidget);
-      expect(find.byKey(const Key('home-bottom-navigation')), findsOneWidget);
+      expect(find.byKey(const Key('bottom-navigation')), findsOneWidget);
+      expect(find.text('Start by adding an item to your shopping list!'), findsOneWidget);
     });
 
     testWidgets('should add items to list', (widgetTester) async {
       await widgetTester.pumpWidget(testWidget);
 
-      Key appBarTextFieldKey = const Key('home-appbar-textfield');
+      Key appBarTextFieldKey = const Key('appbar-textfield');
 
       expect(find.byKey(appBarTextFieldKey), findsOneWidget);
 
@@ -29,6 +29,7 @@ void main() {
 
       await widgetTester.pump();
 
+      expect(find.byKey(const Key('home-body')), findsOneWidget);
       expect(find.text(inputValue), findsOneWidget);
     });
 
@@ -36,14 +37,14 @@ void main() {
       await widgetTester.pumpWidget(testWidget);
 
       String inputValue = 'List item';
-      await widgetTester.enterText(find.byKey(const Key('home-appbar-textfield')), inputValue);
+      await widgetTester.enterText(find.byKey(const Key('appbar-textfield')), inputValue);
       await widgetTester.testTextInput.receiveAction(TextInputAction.done);
 
       await widgetTester.pump();
 
       expect(find.text(inputValue), findsOneWidget);
 
-      await widgetTester.tap(find.byKey(const Key('home-bottom-navigation-button-clear-list')));
+      await widgetTester.tap(find.byKey(const Key('bottom-navigation-button-clear-list')));
       await widgetTester.pumpAndSettle();
 
       expect(find.text('List item'), findsNothing);
@@ -53,15 +54,16 @@ void main() {
       await widgetTester.pumpWidget(testWidget);
 
       String inputValue = 'List item';
-      await widgetTester.enterText(find.byKey(const Key('home-appbar-textfield')), inputValue);
+      await widgetTester.enterText(find.byKey(const Key('appbar-textfield')), inputValue);
       await widgetTester.testTextInput.receiveAction(TextInputAction.done);
 
       await widgetTester.pump();
 
-      await widgetTester.tap(find.byKey(const Key('list-card-item-toggle')));
+      await widgetTester.tap(find.byType(Checkbox));
       await widgetTester.pumpAndSettle();
 
-      expect(widgetTester.widget<Checkbox>(find.byKey(const Key('list-card-item-toggle'))).value, true);
+      expect(widgetTester.widget<Checkbox>(find.byType(Checkbox)).value, true);
+      expect(find.text('Picked up items'), findsOneWidget);
     });
   });
 }

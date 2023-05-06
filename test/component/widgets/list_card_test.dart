@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:nanoid/nanoid.dart';
 import 'package:shopping_list_app/models/list_item.dart';
 import 'package:shopping_list_app/widgets/list_card.dart';
 
@@ -8,15 +9,36 @@ import '../test_util.dart';
 void main() {
   group('ListCard', () {
     testWidgets('should render', (widgetTester) async {
+      var id = nanoid();
+
       Widget testWidget = TestUtil.buildTestScaffold(
-          ListCard(item: ListItem(title: "List item", isComplete: false)));
+        ListCard(
+          item: ListItem(
+            id: id,
+            title: "List item",
+            isPickedUp: false,
+            amount: 1,
+          ),
+        ),
+      );
+
       await widgetTester.pumpWidget(testWidget);
-      expect(find.byKey(const Key('list-card')), findsOneWidget);
+
+      expect(find.byKey(Key('list-card-$id')), findsOneWidget);
       expect(find.text('List item'), findsOneWidget);
-      expect(find.byKey(const Key('list-card-item-toggle')), findsOneWidget);
-      expect(find.byKey(const Key('list-card-item-button-increase')),
+      expect(find.byKey(Key('list-card-item-toggle-$id')), findsOneWidget);
+
+      expect(find.byKey(Key('list-card-item-button-increase-$id')),
           findsOneWidget);
-      expect(find.byKey(const Key('list-card-item-button-decrease')),
+
+      final amount = find.byKey(Key('list-card-item-amount-$id'));
+      final text = widgetTester.firstWidget<Text>(amount);
+      expect(text.data, '1');
+
+      expect(find.byKey(Key('list-card-item-button-increase-$id')),
+          findsOneWidget);
+
+      expect(find.byKey(Key('list-card-item-button-decrease-$id')),
           findsOneWidget);
     });
   });

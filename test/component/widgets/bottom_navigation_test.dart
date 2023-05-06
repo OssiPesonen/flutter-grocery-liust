@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:shopping_list_app/widgets/home/home_bottom_navigation.dart';
+import 'package:shopping_list_app/widgets/bottom_navigation.dart';
 
 void main() {
   group('BottomNavigation', () {
@@ -9,16 +9,16 @@ void main() {
         data: MediaQueryData(),
         child: MaterialApp(
           home: Scaffold(
-            bottomNavigationBar: HomeBottomNavigation(),
+            bottomNavigationBar: BottomNavigation(),
           ),
         ),
       );
 
       await widgetTester.pumpWidget(testWidget);
 
-      expect(find.byKey(const Key('home-bottom-navigation')), findsOneWidget);
+      expect(find.byKey(const Key('bottom-navigation')), findsOneWidget);
 
-      expect(find.byKey(const Key('home-bottom-navigation-button-clear-list')),
+      expect(find.byKey(const Key('bottom-navigation-button-clear-list')),
           findsOneWidget);
     });
   });
