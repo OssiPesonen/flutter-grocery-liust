@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:shopping_list_app/models/list_item.dart';
 import 'package:shopping_list_app/providers/items_provider.dart';
@@ -20,12 +21,13 @@ class _EditItemDialogState extends State<EditItemDialog> {
   final itemAmountController = TextEditingController();
   final priceController = TextEditingController();
   int amount = 0;
+  final formatCurrency = NumberFormat.currency(symbol: '');
 
   @override
   void initState() {
     itemTitleController.text = widget.item.title;
     itemAmountController.text = widget.item.amount.toString();
-    priceController.text = widget.item.price.toString();
+    priceController.text = formatCurrency.format(widget.item.price).toString();
     amount = widget.item.amount;
 
     super.initState();
@@ -40,6 +42,7 @@ class _EditItemDialogState extends State<EditItemDialog> {
   @override
   Widget build(BuildContext context) {
     return CustomDialog(
+      key: const Key('edit-item-dialog'),
       children: [
         const Text(
           'Edit item',
@@ -71,6 +74,7 @@ class _EditItemDialogState extends State<EditItemDialog> {
         SizedBox(
           height: 56,
           child: TextField(
+            key: const Key('edit-item-dialog-price'),
             controller: priceController,
             keyboardType: TextInputType.number,
             decoration: InputDecoration(
@@ -120,6 +124,7 @@ class _EditItemDialogState extends State<EditItemDialog> {
             ),
             const SizedBox(width: 8),
             FilledButton(
+              key: const Key('edit-item-dialog-save'),
               style: ButtonStyle(
                 shape: MaterialStateProperty.all(
                   RoundedRectangleBorder(
@@ -138,7 +143,7 @@ class _EditItemDialogState extends State<EditItemDialog> {
 
                 item.title = itemTitleController.text;
                 item.amount = amount;
-                item.price = double.parse(priceController.text);
+                item.price = double.parse(priceController.text.replaceAll(',', '.'));
 
                 context
                     .read<ItemsProvider>()

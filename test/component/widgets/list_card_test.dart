@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:intl/intl.dart';
 import 'package:nanoid/nanoid.dart';
 import 'package:shopping_list_app/models/list_item.dart';
 import 'package:shopping_list_app/widgets/list_card.dart';
@@ -10,6 +11,7 @@ void main() {
   group('ListCard', () {
     testWidgets('should render', (widgetTester) async {
       var id = nanoid();
+      Intl.defaultLocale = 'en_US';
 
       Widget testWidget = TestUtil.buildTestScaffold(
         ListCard(
@@ -18,6 +20,7 @@ void main() {
             title: "List item",
             isPickedUp: false,
             amount: 1,
+            price: 9.90
           ),
         ),
       );
@@ -27,6 +30,7 @@ void main() {
       expect(find.byKey(Key('list-card-$id')), findsOneWidget);
       expect(find.text('List item'), findsOneWidget);
       expect(find.byKey(Key('list-card-item-toggle-$id')), findsOneWidget);
+      expect(find.text("\$9.90"), findsOneWidget);
 
       expect(find.byKey(Key('list-card-item-button-increase-$id')),
           findsOneWidget);

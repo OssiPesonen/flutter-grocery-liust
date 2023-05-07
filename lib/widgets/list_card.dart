@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:shopping_list_app/models/list_item.dart';
 import 'package:shopping_list_app/providers/items_provider.dart';
@@ -20,6 +21,8 @@ class _ListCardState extends State<ListCard> {
 
   @override
   Widget build(BuildContext context) {
+    final formatCurrency = NumberFormat.simpleCurrency();
+
     return Dismissible(
       key: ValueKey(widget.item.id),
       direction: widget.item.isPickedUp
@@ -101,7 +104,7 @@ class _ListCardState extends State<ListCard> {
                     ),
                     if (widget.item.price > 0) Text(
                       key: Key("list-card-item-price-${widget.item.id}"),
-                      widget.item.price.toString(),
+                      formatCurrency.format(widget.item.price),
                       textAlign: TextAlign.left,
                       style: TextStyle(
                         color: widget.item.isPickedUp

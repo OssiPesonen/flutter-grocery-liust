@@ -28,7 +28,7 @@ class ItemsProvider extends ChangeNotifier {
 
   /// Clear list of items
   void clearItems() {
-    _items.clear();
+    _items.removeWhere((element) => element.isPickedUp);
     notifyListeners();
   }
 
@@ -69,6 +69,7 @@ class ItemsProvider extends ChangeNotifier {
     }
   }
 
+  /// Edit one item
   void editItem(ListItem item) {
     var index = _items.indexWhere((element) => element.id == item.id);
 
@@ -78,6 +79,7 @@ class ItemsProvider extends ChangeNotifier {
     }
   }
 
+  /// Change item's name
   void editItemName(String id, String title) {
     var index = _items.indexWhere((element) => element.id == id);
 
@@ -87,6 +89,7 @@ class ItemsProvider extends ChangeNotifier {
     }
   }
 
+  /// Change item amount directly
   void editItemAmount(String id, int amount) {
     var index = _items.indexWhere((element) => element.id == id);
 
@@ -96,6 +99,7 @@ class ItemsProvider extends ChangeNotifier {
     }
   }
 
+  /// Change item price
   void editItemPrice(String id, double price) {
     var index = _items.indexWhere((element) => element.id == id);
 
