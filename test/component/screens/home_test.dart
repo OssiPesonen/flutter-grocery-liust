@@ -101,7 +101,6 @@ void main() {
       expect(find.text('Picked up items'), findsOneWidget);
     });
 
-
     testWidgets('should toggle check on item swipe right', (widgetTester) async {
       Widget testWidget = TestUtil.buildTestScaffold(const Home());
       await widgetTester.pumpWidget(testWidget);

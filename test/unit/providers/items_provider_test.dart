@@ -33,6 +33,40 @@ void main() {
       expect(itemsProvider.items[0].amount, 1);
     });
 
+    test('should return an existing item based on ID', () {
+      var id = nanoid();
+      var existingId = nanoid();
+
+      final box = mockBox();
+      when(box.get(id)).thenReturn(ListItem(id: existingId, title: 'Existing list item', isPickedUp: false, amount: 1));
+
+      final itemsProvider = ItemsProvider(box);
+      itemsProvider.addItem(ListItem(id: id, title: 'List item', isPickedUp: false, amount: 1));
+
+      expect(itemsProvider.items.length, 1);
+      expect(itemsProvider.items[0].id, existingId);
+      expect(itemsProvider.items[0].isPickedUp, false);
+      expect(itemsProvider.items[0].title, 'Existing list item');
+      expect(itemsProvider.items[0].amount, 1);
+    });
+
+    test('should return an existing item based on title', () {
+      var id = nanoid();
+      var existingId = nanoid();
+
+      final box = mockBox();
+      when(box.values).thenReturn([ListItem(id: existingId, title: 'List item', isPickedUp: false, amount: 1)]);
+
+      final itemsProvider = ItemsProvider(box);
+      itemsProvider.addItem(ListItem(id: id, title: '20 List item', isPickedUp: false, amount: 1));
+
+      expect(itemsProvider.items.length, 1);
+      expect(itemsProvider.items[0].id, existingId);
+      expect(itemsProvider.items[0].isPickedUp, false);
+      expect(itemsProvider.items[0].title, 'List item');
+      expect(itemsProvider.items[0].amount, 20);
+    });
+
     test('should clear items', () {
       final itemsProvider = ItemsProvider(mockBox());
       itemsProvider.clearItems();
