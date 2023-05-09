@@ -36,9 +36,9 @@ class _HomeState extends State<Home> {
         body: listItemCount == 0
             ? const EmptyList()
             : SafeArea(
-                key: const Key('home-body'),
                 child: SingleChildScrollView(
                   child: Column(
+                    key: const Key('home-body'),
                     mainAxisAlignment: MainAxisAlignment.start,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [

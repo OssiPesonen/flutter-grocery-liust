@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_test/flutter_test.dart';
 import 'package:intl/intl.dart';
 import 'package:nanoid/nanoid.dart';
+import 'package:flutter_test/flutter_test.dart';
 import 'package:shopping_list_app/models/list_item.dart';
 import 'package:shopping_list_app/widgets/list_card.dart';
 
@@ -18,8 +18,6 @@ void main() {
           item: ListItem(
             id: id,
             title: "List item",
-            isPickedUp: false,
-            amount: 1,
             price: 9.90
           ),
         ),
@@ -27,22 +25,22 @@ void main() {
 
       await widgetTester.pumpWidget(testWidget);
 
-      expect(find.byKey(Key('list-card-$id')), findsOneWidget);
+      expect(find.byType(Dismissible), findsOneWidget);
       expect(find.text('List item'), findsOneWidget);
-      expect(find.byKey(Key('list-card-item-toggle-$id')), findsOneWidget);
+      expect(find.byType(Checkbox), findsOneWidget);
       expect(find.text("\$9.90"), findsOneWidget);
 
-      expect(find.byKey(Key('list-card-item-button-increase-$id')),
-          findsOneWidget);
+      expect(find.byIcon(Icons.remove_circle_outline_rounded), findsOneWidget);
 
-      final amount = find.byKey(Key('list-card-item-amount-$id'));
+      final amount = find.byKey(const Key('list-card-item-amount'));
+
       final text = widgetTester.firstWidget<Text>(amount);
       expect(text.data, '1');
 
-      expect(find.byKey(Key('list-card-item-button-increase-$id')),
+      expect(find.byKey(const Key('list-card-item-button-increase')),
           findsOneWidget);
 
-      expect(find.byKey(Key('list-card-item-button-decrease-$id')),
+      expect(find.byKey(const Key('list-card-item-button-decrease')),
           findsOneWidget);
     });
   });

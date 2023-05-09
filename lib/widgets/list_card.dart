@@ -24,7 +24,7 @@ class _ListCardState extends State<ListCard> {
     final formatCurrency = NumberFormat.simpleCurrency();
 
     return Dismissible(
-      key: ValueKey(widget.item.id),
+      key: ValueKey(widget.item.targetId),
       direction: widget.item.isPickedUp
           ? DismissDirection.none
           : DismissDirection.horizontal,
@@ -58,12 +58,12 @@ class _ListCardState extends State<ListCard> {
             builder: (ctx) => EditItemDialog(item: widget.item),
           );
         } else if (dismissDirection == DismissDirection.startToEnd) {
-          context.read<ItemsProvider>().toggleItemPicked(widget.item.id);
+          context.read<ItemsProvider>().toggleItemPicked(widget.item.targetId!);
         }
         return false;
       },
       child: Card(
-        key: Key("list-card-${widget.item.id}"),
+        key: Key("list-card"),
         elevation: widget.item.isPickedUp ? 0 : 2,
         shadowColor: const Color.fromRGBO(0, 0, 0, 0.3),
         color: widget.item.isPickedUp
@@ -75,7 +75,7 @@ class _ListCardState extends State<ListCard> {
           child: Row(
             children: [
               Checkbox(
-                key: Key("list-card-item-toggle-${widget.item.id}"),
+                key: Key("list-card-item-toggle"),
                 checkColor: Colors.white,
                 shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(4)),
@@ -84,7 +84,7 @@ class _ListCardState extends State<ListCard> {
                 onChanged: (bool? value) {
                   context
                       .read<ItemsProvider>()
-                      .toggleItemPicked(widget.item.id);
+                      .toggleItemPicked(widget.item.targetId!);
                 },
               ),
               Expanded(
@@ -92,7 +92,7 @@ class _ListCardState extends State<ListCard> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      key: Key("list-card-item-title-${widget.item.id}"),
+                      key: Key("list-card-item-title"),
                       widget.item.title,
                       textAlign: TextAlign.left,
                       style: TextStyle(
@@ -103,7 +103,7 @@ class _ListCardState extends State<ListCard> {
                       ),
                     ),
                     if (widget.item.price > 0) Text(
-                      key: Key("list-card-item-price-${widget.item.id}"),
+                      key: Key("list-card-item-price"),
                       formatCurrency.format(widget.item.price),
                       textAlign: TextAlign.left,
                       style: TextStyle(
@@ -121,12 +121,12 @@ class _ListCardState extends State<ListCard> {
                     SizedBox(
                       width: 48,
                       child: IconButton(
-                        key: Key(
-                            "list-card-item-button-decrease-${widget.item.id}"),
+                        key: const Key(
+                            "list-card-item-button-decrease"),
                         onPressed: () {
                           context
                               .read<ItemsProvider>()
-                              .decreaseAmount(widget.item.id);
+                              .decreaseAmount(widget.item.targetId!);
                         },
                         icon: const Icon(
                           Icons.remove_circle_outline_rounded,
@@ -135,17 +135,17 @@ class _ListCardState extends State<ListCard> {
                       ),
                     ),
                   Text(widget.item.amount.toString(),
-                      key: Key("list-card-item-amount-${widget.item.id}")),
+                      key: Key("list-card-item-amount")),
                   if (!widget.item.isPickedUp)
                     SizedBox(
                       width: 48,
                       child: IconButton(
-                        key: Key(
-                            "list-card-item-button-increase-${widget.item.id}"),
+                        key: const Key(
+                            "list-card-item-button-increase"),
                         onPressed: () {
                           context
                               .read<ItemsProvider>()
-                              .increaseAmount(widget.item.id);
+                              .increaseAmount(widget.item.targetId!);
                         },
                         icon: const Icon(
                           Icons.add_circle_outline_rounded,

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:nanoid/nanoid.dart';
 import 'package:provider/provider.dart';
+import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:shopping_list_app/models/list_item.dart';
 import 'package:shopping_list_app/providers/items_provider.dart';
 import 'package:shopping_list_app/utils/constants.dart' as constants;
@@ -26,34 +27,79 @@ class _AddItemInputState extends State<AddItemInput> {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        TextField(
+        TypeAheadFormField(
           key: const Key('appbar-textfield'),
-          controller: appBarTextFieldController,
-          onSubmitted: (value) {
-            context.read<ItemsProvider>().addItem(
-                  ListItem(
-                    id: nanoid(),
-                    title: value,
-                    isPickedUp: false,
-                    amount: 1,
-                  ),
-                );
-
-            appBarTextFieldController.text = '';
-          },
-          decoration: InputDecoration(
-            filled: true,
-            floatingLabelBehavior: FloatingLabelBehavior.never,
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(8),
-              borderSide: const BorderSide(
-                width: 0,
-                style: BorderStyle.none,
-              ),
-            ),
-            fillColor: constants.inputBackgroundFill,
-            labelText: "Add item to list",
+          hideSuggestionsOnKeyboardHide: true,
+          suggestionsBoxDecoration: SuggestionsBoxDecoration(
+            elevation: 2,
+            borderRadius: BorderRadius.circular(4),
           ),
+          debounceDuration: const Duration(milliseconds: 200),
+          textFieldConfiguration: TextFieldConfiguration(
+            controller: appBarTextFieldController,
+            onSubmitted: (value) {
+              context.read<ItemsProvider>().addItem(
+                    ListItem(
+                      id: nanoid(),
+                      title: value,
+                    ),
+                  );
+
+              appBarTextFieldController.text = '';
+            },
+            decoration: InputDecoration(
+              suffixIcon: IconButton(
+                onPressed: () {
+                  context.read<ItemsProvider>().addItem(
+                        ListItem(
+                          id: nanoid(),
+                          title: appBarTextFieldController.text,
+                        ),
+                      );
+
+                  appBarTextFieldController.text = '';
+                },
+                icon: const Icon(
+                  Icons.playlist_add,
+                  color: Colors.black,
+                ),
+              ),
+              filled: true,
+              floatingLabelBehavior: FloatingLabelBehavior.never,
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(8),
+                borderSide: const BorderSide(
+                  width: 0,
+                  style: BorderStyle.none,
+                ),
+              ),
+              fillColor: constants.inputBackgroundFill,
+              labelText: "Add item to list",
+            ),
+          ),
+          noItemsFoundBuilder: (context) {
+            return Container(
+              padding: const EdgeInsets.fromLTRB(16, 18, 16, 18),
+              child:
+                  const Text('No items found', style: TextStyle(fontSize: 16)),
+            );
+          },
+          suggestionsCallback: (pattern) {
+            if (pattern == '') {
+              return [];
+            }
+
+            return context.read<ItemsProvider>().getItems(pattern);
+          },
+          itemBuilder: (context, item) {
+            return ListTile(
+              title: Text(item.title),
+            );
+          },
+          onSuggestionSelected: (item) {
+            appBarTextFieldController.text = '';
+            return context.read<ItemsProvider>().addItem(item);
+          },
         ),
       ],
     );
