@@ -8,7 +8,7 @@ class ItemsProvider extends ChangeNotifier {
 
   ItemsProvider(this._box);
 
-  final List<ListItem> _items = [];
+  List<ListItem> _items = [];
   final String itemsHiveBox = 'items-box';
 
   List<ListItem> get items {
@@ -162,14 +162,27 @@ class ItemsProvider extends ChangeNotifier {
     }
   }
 
-  /// Change item price
-  void editItemPrice(String targetId, double price) {
-    var index = _items.indexWhere((element) => element.targetId == targetId);
+  /// Change item prices for given ID
+  void editItemPrice(String id, double price) {
+    var items = _items.where((element) => element.id == id);
 
-    if (index > -1) {
-      _items[index].price = price;
-      notifyListeners();
+    // Edit the price of all items on the shopping list
+    _items = items.map((e) {
+      if (e.id == id) {
+        e.price = price;
+      }
+
+      return e;
+    }).toList();
+
+    var item = _box.get(id);
+
+    if (item != null) {
+      item.price = price;
+      _box.put(id, item);
     }
+
+    notifyListeners();
   }
 
   List<ListItem> getItems(String titlePattern) {

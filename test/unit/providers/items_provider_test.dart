@@ -160,8 +160,7 @@ void main() {
       var id = nanoid();
       itemsProvider.addItem(ListItem(id: id, title: 'List item', isPickedUp: false, amount: 1, price: 10.0));
       expect(itemsProvider.items[0].price, 10.0);
-      final targetId = itemsProvider.items[0].targetId!;
-      itemsProvider.editItemPrice(targetId, 5.0);
+      itemsProvider.editItemPrice(id, 5.0);
       expect(itemsProvider.items[0].price, 5.0);
     });
 
@@ -174,6 +173,27 @@ void main() {
       final itemsProvider = ItemsProvider(box);
       final items = itemsProvider.getItems('List item');
       expect(items.length, 2);
+    });
+
+    test('should persist price in database if ID matches existing', () {
+      final box = mockBox();
+      final itemsProvider = ItemsProvider(box);
+      final id = nanoid();
+
+      itemsProvider.addItem(ListItem(id: id, title: 'List item', isPickedUp: false, amount: 1, targetId: nanoid(), price: 10));
+      itemsProvider.addItem(ListItem(id: id, title: 'List item 2', isPickedUp: false, amount: 1, targetId: nanoid(), price: 12));
+
+      // Method should call get to attempt to find an existing item and modify it's price
+      when(box.get(id)).thenReturn(ListItem(id: id, title: 'List item', isPickedUp: false, amount: 1, price: 10.0, targetId: nanoid()));
+
+      // Call the method with a new price
+      itemsProvider.editItemPrice(id, 15.00);
+
+      // Includes the put() calls in addItem(), so 2 + 1
+      verify((box as MockBox).put(id, any)).called(3);
+
+      expect(itemsProvider.items[0].price, 15.0);
+      expect(itemsProvider.items[1].price, 15.0);
     });
   });
 }

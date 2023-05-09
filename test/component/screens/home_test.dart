@@ -11,7 +11,6 @@ import 'package:mockito/annotations.dart';
 
 import '../test_util.dart';
 
-@GenerateMocks([Box<ListItem>])
 void main() {
   group('Home', () {
     Intl.defaultLocale = 'en_US';
