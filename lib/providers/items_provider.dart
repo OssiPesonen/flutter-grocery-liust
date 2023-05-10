@@ -4,15 +4,35 @@ import 'package:nanoid/nanoid.dart';
 import 'package:shopping_list_app/models/list_item.dart';
 
 class ItemsProvider extends ChangeNotifier {
-  final Box<ListItem> _box;
+  final Box<ListItem> _searchBox;
+  final Box<ListItem> _shoppingList;
 
-  ItemsProvider(this._box);
+  ItemsProvider(this._searchBox, this._shoppingList);
 
   List<ListItem> _items = [];
-  final String itemsHiveBox = 'items-box';
+  final String storageBox = 'shopping-list';
+  bool isInitialized = false;
 
   List<ListItem> get items {
     return [..._items];
+  }
+
+  /// Load items from box to provider when initialized
+  void loadItems() {
+    if (!isInitialized) {
+      _items = _shoppingList.values.toList();
+      isInitialized = true;
+    }
+  }
+
+  /// When-ever items change, this should be called
+  /// to persist data over app closing down
+  void _persistItemsToStorage() {
+    _shoppingList.clear();
+
+    for (var i = 0; i < _items.length; i++) {
+      _shoppingList.add(_items[i]);
+    }
   }
 
   /// Parse the item amount from the provided title
@@ -31,6 +51,12 @@ class ItemsProvider extends ChangeNotifier {
     return item;
   }
 
+  /// Private method to persist items and notify listeners
+  void _notifyListeners() {
+    _persistItemsToStorage();
+    notifyListeners();
+  }
+
   /// Add item to list
   void addItem(ListItem item) {
     if (item.title.isEmpty) {
@@ -40,7 +66,7 @@ class ItemsProvider extends ChangeNotifier {
     final targetId = nanoid(12);
 
     // Attempt to find an existing item from storage
-    ListItem? existingItem = _box.get(item.id);
+    ListItem? existingItem = _searchBox.get(item.id);
 
     if (existingItem != null) {
       // Create a new item to break reference
@@ -57,7 +83,7 @@ class ItemsProvider extends ChangeNotifier {
     } else {
       item = _parseAmountFromTitle(item);
 
-      List<ListItem> existing = _box.values
+      List<ListItem> existing = _searchBox.values
           .where((c) => c.title.toLowerCase() == item.title.toLowerCase())
           .toList();
 
@@ -80,18 +106,18 @@ class ItemsProvider extends ChangeNotifier {
         item.targetId = targetId;
 
         // We didn't find anything matching
-        _box.put(item.id, item);
+        _searchBox.put(item.id, item);
         _items.add(item);
       }
     }
 
-    notifyListeners();
+    _notifyListeners();
   }
 
   /// Clear list of items
   void clearItems() {
     _items.removeWhere((element) => element.isPickedUp);
-    notifyListeners();
+    _notifyListeners();
   }
 
   /// Toggle item picked / not picked
@@ -100,7 +126,7 @@ class ItemsProvider extends ChangeNotifier {
 
     if (index > -1) {
       _items[index].isPickedUp = !_items[index].isPickedUp;
-      notifyListeners();
+      _notifyListeners();
     }
   }
 
@@ -110,7 +136,7 @@ class ItemsProvider extends ChangeNotifier {
 
     if (index > -1) {
       _items[index].amount++;
-      notifyListeners();
+      _notifyListeners();
     }
   }
 
@@ -127,25 +153,26 @@ class ItemsProvider extends ChangeNotifier {
         _items.removeAt(index);
       }
 
-      notifyListeners();
+      _notifyListeners();
     }
   }
 
   /// Edit one item
   void editItem(ListItem item) {
-    var existingItem = _box.get(item.id);
+    var existingItem = _searchBox.get(item.id);
 
     // Only update storage if title has remained the same
-    final bool updateStorage = existingItem != null && existingItem.title == item.title;
+    final bool updateStorage =
+        existingItem != null && existingItem.title == item.title;
 
     if (!updateStorage) {
       // Simply update the list item, not storage
       var index =
-      _items.indexWhere((element) => element.targetId == item.targetId);
+          _items.indexWhere((element) => element.targetId == item.targetId);
 
       if (index > -1) {
         _items[index] = item;
-        notifyListeners();
+        _notifyListeners();
       }
     } else {
       // Update all list items with same id but don't touch targetId
@@ -162,8 +189,8 @@ class ItemsProvider extends ChangeNotifier {
       existingItem.price = item.price;
       existingItem.title = item.title;
       existingItem.amount = item.amount;
-      _box.put(item.id, item);
-      notifyListeners();
+      _searchBox.put(item.id, item);
+      _notifyListeners();
     }
   }
 
@@ -174,7 +201,7 @@ class ItemsProvider extends ChangeNotifier {
 
     if (index > -1) {
       _items[index].title = title;
-      notifyListeners();
+      _notifyListeners();
     }
   }
 
@@ -184,7 +211,7 @@ class ItemsProvider extends ChangeNotifier {
 
     if (index > -1) {
       _items[index].amount = amount;
-      notifyListeners();
+      _notifyListeners();
     }
   }
 
@@ -199,19 +226,19 @@ class ItemsProvider extends ChangeNotifier {
       return e;
     }).toList();
 
-    var item = _box.get(id);
+    var item = _searchBox.get(id);
 
     if (item != null) {
       item.price = price;
-      _box.put(id, item);
+      _searchBox.put(id, item);
     }
 
-    notifyListeners();
+    _notifyListeners();
   }
 
   /// Return list of persisted items by given pattern (ie. filter search)
   List<ListItem> getSavedItems(String titlePattern) {
-    return _box.values
+    return _searchBox.values
         .where(
             (c) => c.title.toLowerCase().contains(titlePattern.toLowerCase()))
         .toList();

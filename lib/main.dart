@@ -9,12 +9,13 @@ Future<void> main() async {
   await Hive.initFlutter();
 
   Hive.registerAdapter<ListItem>(ListItemAdapter());
-  Box<ListItem> box = await Hive.openBox<ListItem>('items-box');
+  Box<ListItem> searchListBox = await Hive.openBox<ListItem>('items-search-box');
+  Box<ListItem> shoppingListBox = await Hive.openBox<ListItem>('shopping-list');
 
   runApp(
     MultiProvider(
       providers: [
-        ChangeNotifierProvider(create: (_) => ItemsProvider(box)),
+        ChangeNotifierProvider(create: (_) => ItemsProvider(searchListBox, shoppingListBox)),
       ],
       child: const MyApp(),
     ),
@@ -26,6 +27,8 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    context.read<ItemsProvider>().loadItems();
+
     return MaterialApp(
       title: 'Shopping List',
       theme: ThemeData(

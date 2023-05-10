@@ -13,17 +13,19 @@ void main() {
     when(box.get(any)).thenReturn(null);
     when(box.values).thenReturn([]);
     when(box.put);
+    when((box as MockBox).add(any)).thenAnswer((_) => Future(() => 1));
+    when(box.clear()).thenAnswer((_) => Future(() => 1));
     return box;
   }
   
   group('ItemsProvider', () {
     test('should return an empty list', () {
-      final itemsProvider = ItemsProvider(mockBox());
+      final itemsProvider = ItemsProvider(mockBox(), mockBox());
       expect(itemsProvider.items.length, 0);
     });
 
     test('should return an item once it is added', () {
-      final itemsProvider = ItemsProvider(mockBox());
+      final itemsProvider = ItemsProvider(mockBox(), mockBox());
       var id = nanoid();
       itemsProvider.addItem(ListItem(id: id, title: 'List item', isPickedUp: false, amount: 1));
       expect(itemsProvider.items.length, 1);
@@ -40,7 +42,7 @@ void main() {
       final box = mockBox();
       when(box.get(id)).thenReturn(ListItem(id: existingId, title: 'Existing list item', isPickedUp: false, amount: 1));
 
-      final itemsProvider = ItemsProvider(box);
+      final itemsProvider = ItemsProvider(box, mockBox());
       itemsProvider.addItem(ListItem(id: id, title: 'List item', isPickedUp: false, amount: 1));
 
       expect(itemsProvider.items.length, 1);
@@ -57,7 +59,7 @@ void main() {
       final box = mockBox();
       when(box.values).thenReturn([ListItem(id: existingId, title: 'List item', isPickedUp: false, amount: 1)]);
 
-      final itemsProvider = ItemsProvider(box);
+      final itemsProvider = ItemsProvider(box, mockBox());
       itemsProvider.addItem(ListItem(id: id, title: '20 List item', isPickedUp: false, amount: 1));
 
       expect(itemsProvider.items.length, 1);
@@ -68,13 +70,13 @@ void main() {
     });
 
     test('should clear items', () {
-      final itemsProvider = ItemsProvider(mockBox());
+      final itemsProvider = ItemsProvider(mockBox(), mockBox());
       itemsProvider.clearItems();
       expect(itemsProvider.items.length, 0);
     });
 
     test('should increase amount', () {
-      final itemsProvider = ItemsProvider(mockBox());
+      final itemsProvider = ItemsProvider(mockBox(), mockBox());
       var id = nanoid();
       itemsProvider.addItem(ListItem(id: id, title: 'List item', isPickedUp: false, amount: 1));
       final targetId = itemsProvider.items[0].targetId!;
@@ -86,7 +88,7 @@ void main() {
     });
 
     test('should decrease amount and remove item from list', () {
-      final itemsProvider = ItemsProvider(mockBox());
+      final itemsProvider = ItemsProvider(mockBox(), mockBox());
       var id = nanoid();
       itemsProvider.addItem(ListItem(id: id, title: 'List item', isPickedUp: false, amount: 3));
 
@@ -104,7 +106,7 @@ void main() {
     });
 
     test('should set amount if name starts with number and space', () {
-      final itemsProvider = ItemsProvider(mockBox());
+      final itemsProvider = ItemsProvider(mockBox(), mockBox());
       var id = nanoid();
       itemsProvider.addItem(ListItem(id: id, title: '20 List item', isPickedUp: false, amount: 1));
       expect(itemsProvider.items.length, 1);
@@ -115,7 +117,7 @@ void main() {
     });
 
     test('should edit item title', () {
-      final itemsProvider = ItemsProvider(mockBox());
+      final itemsProvider = ItemsProvider(mockBox(), mockBox());
       var id = nanoid();
       itemsProvider.addItem(ListItem(id: id, title: 'List item', isPickedUp: false, amount: 1));
       final targetId = itemsProvider.items[0].targetId!;
@@ -125,7 +127,7 @@ void main() {
 
     test('should edit the item', () {
       final box = mockBox();
-      final itemsProvider = ItemsProvider(box);
+      final itemsProvider = ItemsProvider(box, mockBox());
 
       var id = nanoid();
       final listItem = ListItem(id: id, title: 'List item', isPickedUp: false, amount: 1);
@@ -157,7 +159,7 @@ void main() {
 
     test('should edit the item and persist changes', () {
       final box = mockBox();
-      final itemsProvider = ItemsProvider(box);
+      final itemsProvider = ItemsProvider(box, mockBox());
       var id = nanoid();
       final listItem = ListItem(id: id, title: 'List item', isPickedUp: false, amount: 1);
 
@@ -190,7 +192,7 @@ void main() {
     });
 
     test('should change the amount', () {
-      final itemsProvider = ItemsProvider(mockBox());
+      final itemsProvider = ItemsProvider(mockBox(), mockBox());
       var id = nanoid();
       itemsProvider.addItem(ListItem(id: id, title: 'List item', isPickedUp: false, amount: 1));
       final targetId = itemsProvider.items[0].targetId!;
@@ -199,7 +201,7 @@ void main() {
     });
 
     test('should edit item price', () {
-      final itemsProvider = ItemsProvider(mockBox());
+      final itemsProvider = ItemsProvider(mockBox(), mockBox());
       var id = nanoid();
       itemsProvider.addItem(ListItem(id: id, title: 'List item', isPickedUp: false, amount: 1, price: 10.0));
       expect(itemsProvider.items[0].price, 10.0);
@@ -213,14 +215,14 @@ void main() {
         ListItem(id: nanoid(), title: 'List item', isPickedUp: false, amount: 1, price: 10.0),
         ListItem(id: nanoid(), title: 'List item 2', isPickedUp: true, amount: 2, price: 5.0)
       ]);
-      final itemsProvider = ItemsProvider(box);
+      final itemsProvider = ItemsProvider(box, mockBox());
       final items = itemsProvider.getSavedItems('List item');
       expect(items.length, 2);
     });
 
     test('should persist price in database if ID matches existing', () {
       final box = mockBox();
-      final itemsProvider = ItemsProvider(box);
+      final itemsProvider = ItemsProvider(box, mockBox());
       final id = nanoid();
 
       itemsProvider.addItem(ListItem(id: id, title: 'List item', isPickedUp: false, amount: 1, targetId: nanoid(), price: 10));
