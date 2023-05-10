@@ -133,11 +133,36 @@ class ItemsProvider extends ChangeNotifier {
 
   /// Edit one item
   void editItem(ListItem item) {
-    var index =
-        _items.indexWhere((element) => element.targetId == item.targetId);
+    var existingItem = _box.get(item.id);
 
-    if (index > -1) {
-      _items[index] = item;
+    // Only update storage if title has remained the same
+    final bool updateStorage = existingItem != null && existingItem.title == item.title;
+
+    if (!updateStorage) {
+      // Simply update the list item, not storage
+      var index =
+      _items.indexWhere((element) => element.targetId == item.targetId);
+
+      if (index > -1) {
+        _items[index] = item;
+        notifyListeners();
+      }
+    } else {
+      // Update all list items with same id but don't touch targetId
+      _items = _items.map((e) {
+        if (e.id == item.id && e.title == item.title) {
+          e.price = item.price;
+          e.title = item.title;
+          e.amount = item.amount;
+        }
+
+        return e;
+      }).toList();
+
+      existingItem.price = item.price;
+      existingItem.title = item.title;
+      existingItem.amount = item.amount;
+      _box.put(item.id, item);
       notifyListeners();
     }
   }
@@ -164,10 +189,8 @@ class ItemsProvider extends ChangeNotifier {
 
   /// Change item prices for given ID
   void editItemPrice(String id, double price) {
-    var items = _items.where((element) => element.id == id);
-
-    // Edit the price of all items on the shopping list
-    _items = items.map((e) {
+    // Edit the price of all matching items on the shopping list
+    _items = _items.map((e) {
       if (e.id == id) {
         e.price = price;
       }
@@ -185,7 +208,7 @@ class ItemsProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  List<ListItem> getItems(String titlePattern) {
+  List<ListItem> getSavedItems(String titlePattern) {
     return _box.values
         .where(
             (c) => c.title.toLowerCase().contains(titlePattern.toLowerCase()))

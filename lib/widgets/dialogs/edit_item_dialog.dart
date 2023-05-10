@@ -20,8 +20,10 @@ class _EditItemDialogState extends State<EditItemDialog> {
   final itemTitleController = TextEditingController();
   final itemAmountController = TextEditingController();
   final priceController = TextEditingController();
-  int amount = 0;
   final formatCurrency = NumberFormat.currency(symbol: '');
+  late String title;
+
+  int amount = 0;
 
   @override
   void initState() {
@@ -29,6 +31,7 @@ class _EditItemDialogState extends State<EditItemDialog> {
     itemAmountController.text = widget.item.amount.toString();
     priceController.text = formatCurrency.format(widget.item.price).toString();
     amount = widget.item.amount;
+    title = widget.item.title;
 
     super.initState();
   }
@@ -145,6 +148,7 @@ class _EditItemDialogState extends State<EditItemDialog> {
                 item.amount = amount;
                 item.price = double.parse(priceController.text.replaceAll(',', '.'));
 
+                // Only update local database if title changed
                 context
                     .read<ItemsProvider>()
                     .editItem(item);

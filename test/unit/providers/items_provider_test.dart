@@ -124,10 +124,13 @@ void main() {
     });
 
     test('should edit the item', () {
-      final itemsProvider = ItemsProvider(mockBox());
+      final box = mockBox();
+      final itemsProvider = ItemsProvider(box);
+
       var id = nanoid();
       final listItem = ListItem(id: id, title: 'List item', isPickedUp: false, amount: 1);
       itemsProvider.addItem(listItem);
+
       expect(itemsProvider.items.length, 1);
       expect(itemsProvider.items[0].id, id);
       expect(itemsProvider.items[0].isPickedUp, false);
@@ -144,6 +147,46 @@ void main() {
       expect(itemsProvider.items[0].isPickedUp, true);
       expect(itemsProvider.items[0].title, 'List item 1');
       expect(itemsProvider.items[0].price, 10.0);
+
+      // Called twice because a call to addItem makes one call here
+      verify((box as MockBox).get(any)).called(2);
+
+      // Should've been called once because of a call to addItem
+      verify((box as MockBox).put(any, any)).called(1);
+    });
+
+    test('should edit the item and persist changes', () {
+      final box = mockBox();
+      final itemsProvider = ItemsProvider(box);
+      var id = nanoid();
+      final listItem = ListItem(id: id, title: 'List item', isPickedUp: false, amount: 1);
+
+      itemsProvider.addItem(listItem);
+
+      expect(itemsProvider.items.length, 1);
+      expect(itemsProvider.items[0].id, id);
+      expect(itemsProvider.items[0].isPickedUp, false);
+      expect(itemsProvider.items[0].title, 'List item');
+      expect(itemsProvider.items[0].amount, 1);
+
+      listItem.title = 'List item';
+      listItem.price = 15.0;
+      listItem.amount = 10;
+
+      when(box.get(id)).thenReturn(itemsProvider.items[0]);
+      itemsProvider.editItem(listItem);
+
+      expect(itemsProvider.items.length, 1);
+      expect(itemsProvider.items[0].id, id);
+      expect(itemsProvider.items[0].isPickedUp, false);
+      expect(itemsProvider.items[0].title, 'List item');
+      expect(itemsProvider.items[0].price, 15.0);
+      expect(itemsProvider.items[0].amount, 10);
+
+      // Called twice because a call to addItem makes one call here
+      verify((box as MockBox).get(any)).called(2);
+      // Should've been called once because of a call to addItem
+      verify((box as MockBox).put(id, itemsProvider.items[0])).called(2);
     });
 
     test('should change the amount', () {
@@ -171,7 +214,7 @@ void main() {
         ListItem(id: nanoid(), title: 'List item 2', isPickedUp: true, amount: 2, price: 5.0)
       ]);
       final itemsProvider = ItemsProvider(box);
-      final items = itemsProvider.getItems('List item');
+      final items = itemsProvider.getSavedItems('List item');
       expect(items.length, 2);
     });
 

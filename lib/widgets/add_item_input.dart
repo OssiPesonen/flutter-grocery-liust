@@ -89,7 +89,7 @@ class _AddItemInputState extends State<AddItemInput> {
               return [];
             }
 
-            return context.read<ItemsProvider>().getItems(pattern);
+            return context.read<ItemsProvider>().getSavedItems(pattern);
           },
           itemBuilder: (context, item) {
             return ListTile(
