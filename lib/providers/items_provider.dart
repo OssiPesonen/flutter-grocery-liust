@@ -167,7 +167,8 @@ class ItemsProvider extends ChangeNotifier {
     }
   }
 
-  /// Change item's name
+  /// Change item's name on the shopping list
+  /// Do not persist changes
   void editItemName(String targetId, String title) {
     var index = _items.indexWhere((element) => element.targetId == targetId);
 
@@ -177,7 +178,7 @@ class ItemsProvider extends ChangeNotifier {
     }
   }
 
-  /// Change item amount directly
+  /// Change item amount in shopping list
   void editItemAmount(String targetId, int amount) {
     var index = _items.indexWhere((element) => element.targetId == targetId);
 
@@ -187,7 +188,7 @@ class ItemsProvider extends ChangeNotifier {
     }
   }
 
-  /// Change item prices for given ID
+  /// Change item price
   void editItemPrice(String id, double price) {
     // Edit the price of all matching items on the shopping list
     _items = _items.map((e) {
@@ -208,6 +209,7 @@ class ItemsProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  /// Return list of persisted items by given pattern (ie. filter search)
   List<ListItem> getSavedItems(String titlePattern) {
     return _box.values
         .where(
